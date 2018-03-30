@@ -39,6 +39,12 @@
              * @default
              */
             bearingTextOut: 'Out',
+             /**
+             * Language dependend label for last point's tooltip
+             * @type {String}
+             * @default
+             */
+            bindTooltipText: "Click and drag to <b>move point</b><br>Press CTRL-key and click to <b>resume line</b>",
                 /**
              * Title for the unit going to be changed
              * @type {String}
@@ -432,7 +438,7 @@
                 }
                 // to remove temp. Line if line at the moment is being drawn and not finished while clicking the control
                 if (this._cntCircle !== 0) {
-                    this._finishOrRestartPath();
+                    this._finishPolylinePath();
                 }
             }
         },
@@ -442,7 +448,7 @@
          */
         _clearAllMeasurements: function() {
             if ((this._cntCircle !== undefined) && (this._cntCircle !== 0)) {
-                    this._finishOrRestartPath();
+                    this._finishPolylinePath();
             }
             if (this._layerPaint) {
                 this._layerPaint.clearLayers();
@@ -790,7 +796,7 @@
                         var lastCircleMarker = this.circleMarkers.last()
                         lastCircleMarker.setStyle (polylineState.options.endCircle);
                         // use Leaflet's own tooltip method to shwo a popuo tooltip if user hovers the last circle of a polyline
-                        lastCircleMarker.bindTooltip("Click and drag to <b>move point</b><br>Press CTRL-key and click to <b>resume line</b>", {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
+                        lastCircleMarker.bindTooltip(polylineState.options.bindTooltipText, {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
                         lastCircleMarker.off ('click', polylineState._finishPolylinePath, polylineState);
                         lastCircleMarker.on ('click', polylineState._resumePolylinePath, polylineState);
                         polylineState._arrPolylines.push(this);
@@ -880,7 +886,7 @@
       
         _dragCircleMouseup: function () {
             // bind new popup-tooltip to the last CircleMArker if dragging finished
-            this._e1.target.bindTooltip ("Click and drag to <b>move point</b><br>Press CTRL-key and click to <b>resume line</b>", {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
+            this._e1.target.bindTooltip (this.options.bindTooltipText, {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
             this._resetPathVariables();
             this._map.off ('mousemove', this._dragCircleMousemove, this);
             this._map.dragging.enable();
